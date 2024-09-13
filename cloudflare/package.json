@@ -1,0 +1,22 @@
+{
+  "scripts": {
+    "dev": "wrangler dev src/index.ts",
+    "deploy": "wrangler deploy --minify src/index.ts",
+    "drizzle:up": "drizzle-kit up",
+    "drizzle:update": "drizzle-kit generate",
+    "db:migrate": "wrangler d1 migrations apply abi-manager-db",
+    "db:execute": "wrangler d1 execute abi-manager-db --command",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.30.10",
+    "hono": "^4.6.1"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.4.31",
+    "@cloudflare/workers-types": "^4.20240909.0",
+    "drizzle-kit": "^0.21.4",
+    "vitest": "1.5.3",
+    "wrangler": "^3.77.0"
+  }
+}
