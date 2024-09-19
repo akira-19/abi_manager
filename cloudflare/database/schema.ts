@@ -8,8 +8,10 @@ import { InferSelectModel, sql, relations } from 'drizzle-orm';
 
 export const contracts = sqliteTable('contracts', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  name: text('name').notNull().unique(),
-  abi: text('abi').notNull().unique(),
+  address: text('address').notNull(),
+  chain: text('chain').notNull(),
+  name: text('name').notNull(),
+  abi: text('abi').notNull(),
   createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`),
 });
 export type ContractSelect = InferSelectModel<typeof contracts>;
@@ -23,7 +25,7 @@ export const functions = sqliteTable(
     contractId: integer('contract_id')
       .notNull()
       .references(() => contracts.id),
-    selector: text('selector').notNull().unique(),
+    selector: text('selector').notNull(),
     comment: text('comment').notNull(),
     createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`),
     updatedAt: text('updated_at').default(sql`(CURRENT_TIMESTAMP)`),

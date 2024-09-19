@@ -1,5 +1,7 @@
 CREATE TABLE `contracts` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`address` text NOT NULL,
+	`chain` text NOT NULL,
 	`name` text NOT NULL,
 	`abi` text NOT NULL,
 	`created_at` text DEFAULT (CURRENT_TIMESTAMP)
@@ -20,7 +22,3 @@ CREATE TABLE `users` (
 	`address` text NOT NULL,
 	`created_at` text DEFAULT (CURRENT_TIMESTAMP)
 );
---> statement-breakpoint
-CREATE UNIQUE INDEX `contracts_name_unique` ON `contracts` (`name`);--> statement-breakpoint
-CREATE UNIQUE INDEX `contracts_abi_unique` ON `contracts` (`abi`);--> statement-breakpoint
-CREATE UNIQUE INDEX `functions_selector_unique` ON `functions` (`selector`);

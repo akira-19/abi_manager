@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "76b69699-74eb-4c94-8375-1bd45bdbcea7",
+  "id": "9f1c54ef-7505-4cb5-a87a-d68123caae1a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "contracts": {
@@ -13,6 +13,20 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": true
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "chain": {
+          "name": "chain",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         },
         "name": {
           "name": "name",
@@ -37,22 +51,7 @@
           "default": "(CURRENT_TIMESTAMP)"
         }
       },
-      "indexes": {
-        "contracts_name_unique": {
-          "name": "contracts_name_unique",
-          "columns": [
-            "name"
-          ],
-          "isUnique": true
-        },
-        "contracts_abi_unique": {
-          "name": "contracts_abi_unique",
-          "columns": [
-            "abi"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
@@ -98,15 +97,7 @@
           "default": "(CURRENT_TIMESTAMP)"
         }
       },
-      "indexes": {
-        "functions_selector_unique": {
-          "name": "functions_selector_unique",
-          "columns": [
-            "selector"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "functions_contract_id_contracts_id_fk": {
           "name": "functions_contract_id_contracts_id_fk",
