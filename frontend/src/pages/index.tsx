@@ -1,18 +1,11 @@
 import { useEffect, useState } from 'react';
+import { Button, Typography, Box, Container } from '@mui/material';
 import Layout from '../components/Layout';
-
 import { connectWallet, checkWalletConnection } from '../utils/wallet';
-import { isAuthenticated } from '../utils/jwt';
 import ContractExecutor from '../components/ContractExecuter';
 import ContractSelector from '../components/ContractSelector';
 import { ethers } from 'ethers';
 import { getData } from '../utils/api';
-
-const style = {
-  width: '100%',
-  display: 'flex',
-  justifyContent: 'center',
-};
 
 type ContractType = {
   id: number;
@@ -48,7 +41,6 @@ export default function Home() {
   const connectWalletHandler = async () => {
     try {
       const accounts = await connectWallet();
-
       setCurrentAccount(accounts[0]);
     } catch (err) {
       console.log(err);
@@ -67,7 +59,6 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const data = await getData('contracts');
-        console.log(data);
         setContracts(data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -79,29 +70,35 @@ export default function Home() {
 
   return (
     <Layout home>
-      <div style={style}>
-        {currentAccount && provider ? (
-          <div className="main-app">
-            <h1 style={{ fontSize: '60px', color: 'white', marginTop: '75px' }}>
-              ABI Manager
-            </h1>
-            <ContractSelector
-              options={contracts}
-              selectContract={contractSelectHandler}
-            />
-            {contract && <ContractExecutor provider={provider} />}
-          </div>
-        ) : (
-          <div className="main-app">
-            <h1 style={{ fontSize: '60px', color: 'white', marginTop: '75px' }}>
-              ABI Manager
-            </h1>
-            <div onClick={connectWalletHandler}>
-              <a href="">Signin by wallet</a>
-            </div>
-          </div>
-        )}
-      </div>
+      <Container>
+        <Box textAlign="center" marginTop={5}>
+          <Typography variant="h1" component="h1" color="white" gutterBottom>
+            ABI Manager
+          </Typography>
+          {currentAccount && provider ? (
+            <>
+              <ContractSelector
+                options={contracts}
+                selectContract={contractSelectHandler}
+              />
+              {contract && (
+                <ContractExecutor
+                  provider={provider}
+                  contractId={contract.id}
+                />
+              )}
+            </>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={connectWalletHandler}
+            >
+              Sign in by wallet
+            </Button>
+          )}
+        </Box>
+      </Container>
     </Layout>
   );
 }

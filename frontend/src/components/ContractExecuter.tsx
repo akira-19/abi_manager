@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
+import { Button, TextField, Box, Typography, Paper } from '@mui/material';
+import { getData } from '../utils/api';
 
 type PropsType = {
   provider: ethers.providers.Web3Provider;
+  contractId: number;
 };
 
-const ContractExecutor: React.FC<PropsType> = ({ provider }) => {
+const ContractExecutor: React.FC<PropsType> = ({ provider, contractId }) => {
   const [contractFunctions, setContractFunctions] = useState<any[]>([]);
   const [inputValues, setInputValues] = useState<{ [key: string]: any[] }>({});
   const [results, setResults] = useState<{ [key: string]: string }>({});
@@ -13,10 +16,12 @@ const ContractExecutor: React.FC<PropsType> = ({ provider }) => {
   const [contractAddress, setContractAddress] = useState<string | null>(null);
   const [abi, setAbi] = useState<string | null>(null);
 
-  const loadContractFunctions = () => {
+  const loadContractFunctions = async () => {
     try {
-      const abi = '[]';
-      const parsedAbi = JSON.parse(abi);
+      const data = await getData(`contracts/${contractId}`);
+      setAbi(data.abi);
+      setContractAddress(data.address);
+      const parsedAbi = JSON.parse(data.abi);
       const functions = parsedAbi.filter(
         (item: any) => item.type === 'function',
       );
@@ -47,7 +52,6 @@ const ContractExecutor: React.FC<PropsType> = ({ provider }) => {
         provider.getSigner(),
       );
 
-      // 選択した関数の入力値を取得して実行
       const result = await contract[functionName](...inputValues[functionName]);
       setResults((prevResults) => ({
         ...prevResults,
@@ -60,50 +64,88 @@ const ContractExecutor: React.FC<PropsType> = ({ provider }) => {
   };
 
   return (
-    <div>
-      <h2>Execute functions from ABI</h2>
-
-      <button onClick={loadContractFunctions}>Read functions from ABI</button>
-
+    <Box mt={5}>
+      <Typography variant="h5" gutterBottom>
+        Execute functions from ABI
+      </Typography>
+      <Button
+        color="inherit"
+        variant="outlined"
+        onClick={loadContractFunctions}
+        sx={{
+          cursor: 'pointer',
+          '&:hover': {
+            backgroundColor: 'rgb(255, 255, 255, 0.3) !important',
+          },
+        }}
+      >
+        Read functions from ABI
+      </Button>
       {contractFunctions.length > 0 && (
-        <div>
-          <h3>Function List</h3>
+        <Box mt={5}>
+          <Typography variant="h4">Function List</Typography>
           {contractFunctions.map((func, index) => (
-            <div key={index}>
-              <h4>name: {func.name}</h4>
-
-              {func.inputs.map((input: any, inputIndex: number) => (
-                <div key={inputIndex}>
-                  <label>
-                    {input.name} ({input.type}):
-                  </label>
-                  <input
-                    type="text"
-                    value={inputValues[func.name][inputIndex]}
-                    onChange={(e) => {
-                      const newValues = [...inputValues[func.name]];
-                      newValues[inputIndex] = e.target.value;
-                      setInputValues((prevValues) => ({
-                        ...prevValues,
-                        [func.name]: newValues,
-                      }));
-                    }}
-                  />
-                </div>
-              ))}
-              <button onClick={() => executeFunction(func.name)}>
-                Execute
-              </button>
-              {results[func.name] && (
-                <div>
-                  <h5>Result: {results[func.name]}</h5>
-                </div>
-              )}
-            </div>
+            <Paper
+              key={index}
+              elevation={3}
+              sx={{ backgroundColor: 'rgba(3,3,3, 0.2)' }}
+            >
+              <Box mt={3} p={2}>
+                <Typography variant="h5" color="white" mb={1}>
+                  {func.name}
+                </Typography>
+                {func.inputs.map((input: any, inputIndex: number) => (
+                  <Box key={inputIndex} mt={2} mb={2}>
+                    <TextField
+                      label={`${input.name} (${input.type})`}
+                      variant="outlined"
+                      value={inputValues[func.name][inputIndex]}
+                      onChange={(e) => {
+                        const newValues = [...inputValues[func.name]];
+                        newValues[inputIndex] = e.target.value;
+                        setInputValues((prevValues) => ({
+                          ...prevValues,
+                          [func.name]: newValues,
+                        }));
+                      }}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          color: 'white',
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'white',
+                          },
+                        },
+                        '& .MuiInputLabel-outlined': {
+                          color: 'white',
+                        },
+                      }}
+                    />
+                  </Box>
+                ))}
+                <Button
+                  color="inherit"
+                  variant="contained"
+                  onClick={() => executeFunction(func.name)}
+                  sx={{
+                    cursor: 'pointer',
+                    '&:hover': {
+                      backgroundColor: 'rgb(255, 255, 255, 0.3) !important',
+                    },
+                  }}
+                >
+                  Execute
+                </Button>
+                {results[func.name] && (
+                  <Typography variant="body1" mt={2} color="white">
+                    Result: {results[func.name]}
+                  </Typography>
+                )}
+              </Box>
+            </Paper>
           ))}
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 
