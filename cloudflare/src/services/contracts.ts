@@ -12,7 +12,7 @@ export const listContracts = async (
 ): Promise<ListContractType[]> => {
   const client = drizzle(db, { schema });
   const data = await client
-    .select({ id: contracts.id, name: contracts.name })
+    .select({ id: contracts.id, name: contracts.name, chain: contracts.chain })
     .from(contracts);
 
   return data;
@@ -40,12 +40,16 @@ export const fetchContract = async (db: D1Database, id: number) => {
 export const addContract = async (
   db: D1Database,
   name: string,
+  contractAddress: string,
+  chain: string,
   abi: string,
 ) => {
   const client = drizzle(db, { schema });
   await client.insert(contracts).values({
     name,
     abi,
+    address: contractAddress,
+    chain,
   });
 
   return;
